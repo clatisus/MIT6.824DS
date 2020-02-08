@@ -3,21 +3,37 @@ package mr
 //
 // RPC definitions.
 //
-// remember to capitalize all names.
-//
 
-//
-// example to show how to declare the arguments
-// and reply for an RPC.
-//
-
-type ExampleArgs struct {
-	X int
+type MapTask struct {
+	FileName     string
+	MapIndex     int
+	ReduceNumber int
 }
 
-type ExampleReply struct {
-	Y int
+type ReduceTask struct {
+	ReduceIndex int
+	MapNumber   int
 }
 
-// Add your RPC definitions here.
+type Task struct {
+	Phase      JobPhase
+	MapTask    MapTask
+	ReduceTask ReduceTask
+}
 
+type AskForTaskArgs struct {
+	CompleteTask Task
+}
+
+type AskForTaskReply struct {
+	Task Task
+	Done bool
+}
+
+type JobPhase string
+
+const (
+	MapPhase       JobPhase = "map"
+	ReducePhase    JobPhase = "reduce"
+	UndefinedPhase JobPhase = "undefined"
+)

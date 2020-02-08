@@ -9,10 +9,13 @@ package main
 // Please do not change this file.
 //
 
-import "../mr"
-import "time"
-import "os"
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"time"
+
+	"github.com/clatisus/MIT6.824DS/src/mr"
+)
 
 func main() {
 	if len(os.Args) < 2 {

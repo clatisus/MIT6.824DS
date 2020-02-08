@@ -1,32 +1,45 @@
 package main
 
-//
-// start a worker process, which is implemented
-// in ../mr/worker.go. typically there will be
-// multiple worker processes, talking to one master.
-//
-// go run mrworker.go wc.so
-//
-// Please do not change this file.
-//
-
 import (
 	"fmt"
 	"github.com/clatisus/MIT6.824DS/src/mr"
 	"log"
 	"os"
 	"plugin"
+	"strconv"
+	"sync"
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "Usage: mrworker xxx.so\n")
+	if len(os.Args) < 4 {
+		fmt.Fprintf(os.Stderr, "Usage: runmr xxx.so reduce# inputfiles...\n")
 		os.Exit(1)
 	}
-
 	mapf, reducef := loadPlugin(os.Args[1])
+	nReduce, err := strconv.Atoi(os.Args[2])
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
 
-	mr.Worker(mapf, reducef)
+	var done sync.WaitGroup
+	for i, filename := range os.Args[3:] {
+		done.Add(1)
+		go func(i int, filename string) {
+			defer done.Done()
+			mr.Map(filename, i, nReduce, mapf)
+		}(i, filename)
+	}
+	done.Wait()
+
+	nMap := len(os.Args[3:])
+	for i := 0; i < nReduce; i++ {
+		done.Add(1)
+		go func(i int) {
+			defer done.Done()
+			mr.Reduce(i, nMap, reducef)
+		}(i)
+	}
+	done.Wait()
 }
 
 //
