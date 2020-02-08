@@ -5,20 +5,8 @@
 
 LABS=" lab1 lab2a lab2b lab2c lab3a lab3b lab4a lab4b "
 
-%:
+%: check-%
 	@echo "Preparing $@-handin.tar.gz"
-	@echo "Checking for committed temporary files..."
-	@if git ls-files | grep -E 'mr-tmp|mrinput' > /dev/null; then \
-		echo "" ; \
-		echo "OBS! You have committed some large temporary files:" ; \
-		echo "" ; \
-		git ls-files | grep -E 'mr-tmp|mrinput' | sed 's/^/\t/' ; \
-		echo "" ; \
-		echo "Follow the instructions at http://stackoverflow.com/a/308684/472927" ; \
-		echo "to remove them, and then run make again." ; \
-		echo "" ; \
-		exit 1 ; \
-	fi
 	@if echo $(LABS) | grep -q " $@ " ; then \
 		echo "Tarring up your submission..." ; \
 		tar cvzf $@-handin.tar.gz \
@@ -28,6 +16,10 @@ LABS=" lab1 lab2a lab2b lab2c lab3a lab3b lab4a lab4b "
 			"--exclude=src/main/mr-*" \
 			"--exclude=mrtmp.*" \
 			"--exclude=src/main/diff.out" \
+			"--exclude=src/main/mrmaster" \
+			"--exclude=src/main/mrsequential" \
+			"--exclude=src/main/mrworker" \
+			"--exclude=*.so" \
 			Makefile src; \
 		if ! test -e api.key ; then \
 			echo "Missing $(PWD)/api.key. Please create the file with your key in it or submit the $@-handin.tar.gz via the web interface."; \
@@ -40,7 +32,7 @@ LABS=" lab1 lab2a lab2b lab2c lab3a lab3b lab4a lab4b "
 			cat api.key.fix | tr -d '\n' > api.key ; \
 			rm api.key.fix ; \
 			curl -F file=@$@-handin.tar.gz -F "key=<api.key" \
-			https://6824.scripts.mit.edu/2018/handin.py/upload > /dev/null || { \
+			https://6824.scripts.mit.edu/2020/handin.py/upload > /dev/null || { \
 				echo ; \
 				echo "Submit seems to have failed."; \
 				echo "Please upload the tarball manually on the submission website."; } \
@@ -48,3 +40,8 @@ LABS=" lab1 lab2a lab2b lab2c lab3a lab3b lab4a lab4b "
 	else \
 		echo "Bad target $@. Usage: make [$(LABS)]"; \
 	fi
+
+.PHONY: check-%
+check-%:
+	@echo "Checking that your submission builds correctly..."
+	@./.check-build git://g.csail.mit.edu/6.824-golabs-2020 $(patsubst check-%,%,$@)
