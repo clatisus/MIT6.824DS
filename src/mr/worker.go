@@ -23,10 +23,8 @@ func askForTask(args AskForTaskArgs) (reply AskForTaskReply, ok bool) {
 // main/mrworker.go calls this function.
 //
 func Worker(mapf func(string, string) []KeyValue, reducef func(string, []string) string) {
-	debug("worker started\n")
-
 	args := AskForTaskArgs{}
-	args.CompleteTask.Phase = undefinedPhase
+	args.CompleteTask.Phase = UndefinedPhase
 	for {
 		reply, ok := askForTask(args)
 		if !ok || reply.Done {
@@ -36,10 +34,10 @@ func Worker(mapf func(string, string) []KeyValue, reducef func(string, []string)
 		args.CompleteTask = *task
 
 		switch task.Phase {
-		case mapPhase:
+		case MapPhase:
 			mapTask := task.MapTask
 			Map(mapTask.FileName, mapTask.MapIndex, mapTask.ReduceNumber, mapf)
-		case reducePhase:
+		case ReducePhase:
 			reduceTask := task.ReduceTask
 			Reduce(reduceTask.ReduceIndex, reduceTask.MapNumber, reducef)
 		default:

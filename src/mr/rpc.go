@@ -16,7 +16,7 @@ type ReduceTask struct {
 }
 
 type Task struct {
-	Phase      jobPhase
+	Phase      JobPhase
 	MapTask    MapTask
 	ReduceTask ReduceTask
 }
@@ -30,10 +30,10 @@ type AskForTaskReply struct {
 	Done bool
 }
 
-type jobPhase string
+type JobPhase string
 
 const (
-	mapPhase       jobPhase = "map"
-	reducePhase    jobPhase = "reduce"
-	undefinedPhase jobPhase = "undefined"
+	MapPhase       JobPhase = "map"
+	ReducePhase    JobPhase = "reduce"
+	UndefinedPhase JobPhase = "undefined"
 )

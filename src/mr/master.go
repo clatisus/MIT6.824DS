@@ -61,7 +61,7 @@ func (m *Master) finishTask(task Task) {
 	// mark piggybacked task as completed
 	// if undefined phase, do not broadcast
 	switch task.Phase {
-	case mapPhase:
+	case MapPhase:
 		_, ok := m.runningMapTaskMap[task.MapTask.MapIndex]
 		if !ok {
 			// task may be finished multiple times due to timeout re-schedule
@@ -70,7 +70,7 @@ func (m *Master) finishTask(task Task) {
 		delete(m.runningMapTaskMap, task.MapTask.MapIndex)
 		m.finishedMap++
 		m.cond.Broadcast()
-	case reducePhase:
+	case ReducePhase:
 		_, ok := m.runningReduceTaskMap[task.ReduceTask.ReduceIndex]
 		if !ok {
 			return
@@ -86,7 +86,7 @@ func (m *Master) scheduleTask() (task Task, result ScheduleResult) {
 
 	select {
 	case mapIndex := <-m.mapTaskChan:
-		task.Phase = mapPhase
+		task.Phase = MapPhase
 		task.MapTask = MapTask{
 			FileName:     m.files[mapIndex],
 			MapIndex:     mapIndex,
@@ -102,7 +102,7 @@ func (m *Master) scheduleTask() (task Task, result ScheduleResult) {
 
 	select {
 	case reduceIndex := <-m.reduceTaskChan:
-		task.Phase = reducePhase
+		task.Phase = ReducePhase
 		task.ReduceTask = ReduceTask{
 			ReduceIndex: reduceIndex,
 			MapNumber:   m.nMap,
