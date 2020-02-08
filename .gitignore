@@ -1,3 +1,13 @@
+.idea
 pkg/
 api.key
 *-handin.tar.gz
+.DS_Store
+*.so
+
+# lab 1
+src/main/mr-tmp
+src/mr/runmr/mr-tmp
+src/main/mrmaster
+src/main/mrsequential
+src/main/mrworker
