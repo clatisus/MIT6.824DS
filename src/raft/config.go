@@ -8,7 +8,7 @@ package raft
 // test with the original before submitting.
 //
 
-import "../labrpc"
+import "github.com/clatisus/MIT6.824DS/src/labrpc"
 import "log"
 import "sync"
 import "testing"
