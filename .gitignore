@@ -11,3 +11,6 @@ src/mr/runmr/mr-tmp
 src/main/mrmaster
 src/main/mrsequential
 src/main/mrworker
+
+# lab 2
+*.test
